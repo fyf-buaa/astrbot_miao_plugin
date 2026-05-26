@@ -1,0 +1,5 @@
+name: astrbot_plugin_miao
+version: "1.0.0"
+description: A Genshin Impact and Star Rail game data plugin
+author: Migration from py_miao_plugin
+astrbot_version: ">=4.16"

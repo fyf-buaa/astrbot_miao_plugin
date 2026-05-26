@@ -1,0 +1,17 @@
+# =============================================================================
+# Miao-Plugin for AstrBot — Python Dependencies
+# =============================================================================
+# Install: pip install -r requirements.txt
+# =============================================================================
+
+# Pillow — Image rendering for character cards, profile cards, and UI elements
+# Used in vendored/ (pillow_canvas, pillow_draw, pillow_fonts, pillow_assets)
+Pillow>=10.0.0
+
+# PyYAML — Loading help/default config YAML files
+# Used in apps/_help_render.py
+PyYAML>=6.0
+
+# aiohttp — Async HTTP client for Enka Network / Mihomo API requests
+# Used by models/ for fetching player profile data
+aiohttp>=3.9.0

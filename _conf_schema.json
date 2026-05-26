@@ -1,0 +1,12 @@
+{
+  "renderScale": {
+    "description": "Image rendering scale (50-200)",
+    "type": "int",
+    "default": 100
+  },
+  "admin_qq": {
+    "description": "Admin/Master QQ accounts",
+    "type": "list",
+    "default": []
+  }
+}
