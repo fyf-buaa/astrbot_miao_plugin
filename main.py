@@ -134,6 +134,7 @@ class AstrBotMiaoPlugin(Star):
     ):
         """Common handler flow: wrap → resolve → dispatch → yield replies."""
         import tempfile
+        from pathlib import Path
         from .tools.path import data_path
 
         e = MiaoEvent(event, admins=self._admins)
@@ -141,7 +142,7 @@ class AstrBotMiaoPlugin(Star):
         await handler(e)
 
         # Ensure tmp dir for temp images
-        tmp_dir = data_path / "tmp"
+        tmp_dir = Path(data_path) / "tmp"
         tmp_dir.mkdir(parents=True, exist_ok=True)
 
         for rtype, content in e.get_reply_results():
