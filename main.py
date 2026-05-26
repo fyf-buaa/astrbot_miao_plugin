@@ -55,6 +55,18 @@ from .apps.profile import (
     damageCalc_handler,
 )
 
+# ── Genshin plugin handlers ─────────────────────────────────────────
+from .apps.genshin import (
+    init_genshin,
+    help_handler as genshin_help_handler,
+    uid_bind_handler,
+    uid_unbind_handler,
+    uid_show_handler,
+    abbr_set_handler,
+    abbr_del_handler,
+    abbr_list_handler,
+)
+
 # ── Regex dispatch table (#-prefixed commands) ─────────────────────
 # Ordered most-specific-first to avoid false matches.
 
@@ -92,6 +104,16 @@ _REGEX_DISPATCH: list[tuple[str, Any]] = [
     (CHAR_MATERIAL_PATTERN, charMaterial_handler), # ^#(.+)(材料|突破)$
     (TODAY_MATERIAL_PATTERN, todayMaterial_handler),
     (r"^#*(我的)?(今日|今天|明日|明天|周.*)?([五四54]星)?(技能|天赋)+(汇总|统计|列表)?[ \|0-9]*$", talentStat_handler),
+    # ═══════════════════════════════════════════════════════════════
+    #  Genshin plugin commands  (10)
+    # ═══════════════════════════════════════════════════════════════
+    (r"^#(原神|星铁|绝区零)?(帮助|菜单|help)$", genshin_help_handler),
+    (r"^#(原神|星铁|绝区零)?(删除|解绑)uid(\s|\+)*([0-9]{1,2})?$", uid_unbind_handler),
+    (r"^#(原神|星铁|绝区零)?绑定(uid)?(\s|\+)*(((1[0-9]|[1-9])[0-9]{8}|[1-9][0-9]{7}))?$", uid_bind_handler),
+    (r"^#(原神|星铁|绝区零)?(我的)?(uid)[0-9]{0,2}$", uid_show_handler),
+    (r"^#(星铁)?(设置|配置)(.*)(别名|昵称)$", abbr_set_handler),
+    (r"^#(星铁)?删除(别名|昵称)(.*)$", abbr_del_handler),
+    (r"^#(星铁)?(.*)(别名|昵称)$", abbr_list_handler),
     # -- Broadest profile matchers (catch-all) --
     (r"^#*([^#]+)\s*(详细|详情|面板|面版|圣遗物|遗器)\s*(\d{9,10})*$", profileDetail_handler),
     (r"^#*([^#]+)\s*(伤害|伤害\d+)\s*(\d{9,10})*$", damageCalc_handler),
@@ -121,6 +143,9 @@ class AstrBotMiaoPlugin(Star):
 
         # Initialise static configuration manager
         Cfg.init_config(config)
+
+        # Initialise genshin plugin module
+        init_genshin(self._uid_store, data_path)
 
         logger.info(
             "astrbot_plugin_miao loaded | admins=%s data_dir=%s",
