@@ -4,7 +4,7 @@ import re
 from pathlib import Path
 from typing import Any
 
-from astrbot.api.event import filter, AstrMessageEvent, EventMessageType
+from astrbot.api.event import filter, AstrMessageEvent
 from astrbot.api.star import Context, Star
 from astrbot.api import logger, AstrBotConfig
 
@@ -178,7 +178,7 @@ class AstrBotMiaoPlugin(Star):
     #  Regex event listener  (dispatches all #-prefixed commands)
     # ═══════════════════════════════════════════════════════════════
 
-    @filter.event_message_type(EventMessageType.ALL)
+    @filter.event_message_type(filter.EventMessageType.ALL)
     async def on_message(self, event: AstrMessageEvent) -> Any:
         """Catch-all regex dispatcher for #-prefixed commands."""
         msg: str = event.message_str or ""
