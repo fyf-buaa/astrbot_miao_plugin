@@ -133,14 +133,28 @@ class AstrBotMiaoPlugin(Star):
         self, event: AstrMessageEvent, handler: Any,
     ):
         """Common handler flow: wrap → resolve → dispatch → yield replies."""
+        import tempfile
+        from .tools.path import data_path
+
         e = MiaoEvent(event, admins=self._admins)
         await resolve_uid(e, self._uid_store)
         await handler(e)
+
+        # Ensure tmp dir for temp images
+        tmp_dir = data_path / "tmp"
+        tmp_dir.mkdir(parents=True, exist_ok=True)
+
         for rtype, content in e.get_reply_results():
             if rtype == "plain":
                 yield event.plain_result(str(content))
             elif rtype == "image":
-                yield event.image_result(content)
+                # image_result() expects a file path, not bytes
+                with tempfile.NamedTemporaryFile(
+                    suffix=".png", delete=False, dir=str(tmp_dir)
+                ) as tmp:
+                    tmp.write(content)
+                    tmp_path = tmp.name
+                yield event.image_result(tmp_path)
 
     # ═══════════════════════════════════════════════════════════════
     #  Literal @filter.command handlers  (5)
