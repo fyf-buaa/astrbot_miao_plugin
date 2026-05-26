@@ -1,0 +1,60 @@
+{% extends defaultLayout %}
+{% block css %}
+<link rel="stylesheet" type="text/css" href="{{ _res_path }}/admin/index.css"/>
+{% endblock %}
+{% block main %}
+<div class="info_box">
+  <div class="head-box type{{ bgType or "" }}">
+    <div class="label">喵喵管理面板</div>
+    <div class="title">#喵喵设置</div>
+  </div>
+</div>
+{% for cfgGroup in schema %}
+<div class="cfg-box">
+  <div class="cfg-group">{{ cfgGroup.title }}</div>
+  <ul class="cfg-ul">
+    {% for cfgKey, cfgItem in cfgGroup.cfg.items() %}
+    <li class="cfg-li">
+      <div class="cfg-line">
+        {{ cfgItem.title }}
+        {% if not (cfgItem.miao and isMiao) %}
+        <span class="cfg-hint"> #喵喵设置{{ cfgItem.key }}
+          {% if cfgItem.type == "num" %} {{ cfgItem.def }}{% else %} 开启/关闭{% endif %}
+        </span>
+        {% endif %}
+        {% if cfgItem.type in ("num", "str") %}
+        <div class="cfg-status">{{ cfg.get(cfgKey, "") }}</div>
+        {% else %}
+        {% if cfg.get(cfgKey) or (cfgItem.miao and isMiao) %}
+        <div class="cfg-status">{{ "默认开启" if (cfgItem.miao and isMiao) else "已开启" }}</div>
+        {% else %}
+        <div class="cfg-status status-off">已关闭</div>
+        {% endif %}
+        {% endif %}
+      </div>
+      {% if cfgItem.desc and cfgItem.showDesc != false %}
+      <div class="cfg-desc">{{ cfgItem.desc }}</div>
+      {% endif %}
+    </li>
+    {% endfor %}
+  </ul>
+</div>
+{% endfor %}
+<div class="cfg-box">
+  <div class="cfg-group">其他设置</div>
+  <ul class="cfg-ul">
+    <li class="cfg-li">
+      <div class="cfg-line">
+        角色图片扩展包
+        <span class="cfg-hint"> #喵喵更新图像</span>
+        {% if imgPlus %}
+        <div class="cfg-status">已安装</div>
+        {% else %}
+        <div class="cfg-status status-off">未安装</div>
+        {% endif %}
+      </div>
+      <div class="cfg-desc">安装角色的扩展插图，图片较多可能需要一定时间，在返回提示前请勿重复执行</div>
+    </li>
+  </ul>
+</div>
+{% endblock %}

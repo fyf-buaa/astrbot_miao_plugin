@@ -8,7 +8,7 @@ from astrbot.api.event import filter, AstrMessageEvent
 from astrbot.api.star import Context, Star
 from astrbot.api import logger, AstrBotConfig
 
-from .adapter import MiaoEvent, resolve_uid
+from .adapter import MiaoEvent, require_game, resolve_uid
 from .uid_store import UIDStore
 from .components.cfg import Cfg
 
@@ -67,56 +67,64 @@ from .apps.genshin import (
     abbr_list_handler,
 )
 
+# ── Handlers that don't need game context ─────────────────────────
+_NO_GAME_HANDLERS = {
+    help_handler, version_handler, genshin_help_handler,
+    sys_cfg_handler, update_res_handler, profileHelp_handler,
+    uid_bind_handler, uid_unbind_handler, uid_show_handler,
+    abbr_set_handler, abbr_del_handler, abbr_list_handler,
+}
+
 # ── Regex dispatch table (#-prefixed commands) ─────────────────────
 # Ordered most-specific-first to avoid false matches.
 
 _REGEX_DISPATCH: list[tuple[str, Any]] = [
     # -- Exact #喵喵 patterns --
-    (CHARACTER_PATTERN, character_handler),     # ^#喵喵角色卡片$
-    (WIKI_PATTERN, wiki_handler),               # ^#喵喵WIKI$
-    (r"^#喵喵(角色|查询)[ \|0-9]*$", avatarList_handler),
+    (CHARACTER_PATTERN, character_handler),     # ^/喵喵角色卡片$
+    (WIKI_PATTERN, wiki_handler),               # ^/喵喵WIKI$
+    (r"^/喵喵(角色|查询)[ \|0-9]*$", avatarList_handler),
     # -- Admin commands --
-    (r"^#喵喵(强制)?(更新图像|图像更新|更新资源)$", update_res_handler),
-    (r"^#喵喵设置\s*(.*?)\s*(.*)$", sys_cfg_handler),
+    (r"^/喵喵(强制)?(更新图像|图像更新|更新资源)$", update_res_handler),
+    (r"^/喵喵设置\s*(.*?)\s*(.*)$", sys_cfg_handler),
     # -- Calendar --
     (CALENDAR_PATTERN, calendar_handler),
     # -- Wife / husband --
     (WIFE_PATTERN, wife_handler),
     # -- Profile help --
-    (r"^#(角色|换|更换)?面[板版]帮助$", profileHelp_handler),
+    (r"^/(角色|换|更换)?面[板版]帮助$", profileHelp_handler),
     # -- Enemy level --
-    (r"^#(敌人|怪物)等级\s*\d{1,3}\s*$", enemyLv_handler),
+    (r"^/(敌人|怪物)等级\s*\d{1,3}\s*$", enemyLv_handler),
     # -- Profile commands with optional game prefix --
-    (r"^#(星铁|原神)?(全部面板更新|更新全部面板|获取游戏角色详情|更新面板|面板更新)\s*(\d{9,10})?$", profileRefresh_handler),
-    (r"^#(星铁|原神)?(删除全部面板|删除面板|删除面板数据)\s*(\d{9,10})?$", profileDel_handler),
-    (r"^#(星铁|原神)?(加载|重新加载|重载)面板\s*(\d{9,10})?$", profileReload_handler),
-    (r"^#(星铁|原神)?(面板)?练度统计\s*(\d{9,10})?$", profileStat_handler),
-    (r"^#(星铁|原神)?(面板角色|角色面板|面板)(列表)?\s*(\d{9,10})?$", profileList_handler),
-    (r"^#(星铁|原神)?(圣遗物|遗器)列表\s*(\d{9,10})?$", artisList_handler),
+    (r"^/(星铁|原神)?(全部面板更新|更新全部面板|获取游戏角色详情|更新面板|面板更新)\s*(\d{9,10})?$", profileRefresh_handler),
+    (r"^/(星铁|原神)?(删除全部面板|删除面板|删除面板数据)\s*(\d{9,10})?$", profileDel_handler),
+    (r"^/(星铁|原神)?(加载|重新加载|重载)面板\s*(\d{9,10})?$", profileReload_handler),
+    (r"^/(星铁|原神)?(面板)?练度统计\s*(\d{9,10})?$", profileStat_handler),
+    (r"^/(星铁|原神)?(面板角色|角色面板|面板)(列表)?\s*(\d{9,10})?$", profileList_handler),
+    (r"^/(星铁|原神)?(圣遗物|遗器)列表\s*(\d{9,10})?$", artisList_handler),
     # -- Rank management --
-    (r"^#(开启|打开|启用|关闭|禁用)(群内|群|全部)*(排名|排行)$", manageRank_handler),
-    (r"^#(星铁|原神)?(重置|重设)(.*)(排名|排行)$", resetRank_handler),
-    (r"^#(星铁|原神)?(刷新|更新|重新加载)(群内|群|全部)*(排名|排行)$", refreshRank_handler),
-    (r"^#(星铁|原神)?(群|群内)?(排名|排行)?(最强|最高|最高分|最牛|第一|极限)+.+", groupProfile_handler),
+    (r"^/(开启|打开|启用|关闭|禁用)(群内|群|全部)*(排名|排行)$", manageRank_handler),
+    (r"^/(星铁|原神)?(重置|重设)(.*)(排名|排行)$", resetRank_handler),
+    (r"^/(星铁|原神)?(刷新|更新|重新加载)(群内|群|全部)*(排名|排行)$", refreshRank_handler),
+    (r"^/(星铁|原神)?(群|群内)?(排名|排行)?(最强|最高|最高分|最牛|第一|极限)+.+", groupProfile_handler),
     # -- Wiki fuzzy commands --
-    (CHAR_WIKI_PATTERN, charWiki_handler),         # ^#(.+)(WIKI|wiki|资料|百科)$
-    (CHAR_TALENT_PATTERN, charTalent_handler),     # ^#(.+)(天赋|技能)(表|数据)?$
-    (CHAR_MATERIAL_PATTERN, charMaterial_handler), # ^#(.+)(材料|突破)$
+    (CHAR_WIKI_PATTERN, charWiki_handler),         # ^/(.+)(WIKI|wiki|资料|百科)$
+    (CHAR_TALENT_PATTERN, charTalent_handler),     # ^/(.+)(天赋|技能)(表|数据)?$
+    (CHAR_MATERIAL_PATTERN, charMaterial_handler), # ^/(.+)(材料|突破)$
     (TODAY_MATERIAL_PATTERN, todayMaterial_handler),
-    (r"^#*(我的)?(今日|今天|明日|明天|周.*)?([五四54]星)?(技能|天赋)+(汇总|统计|列表)?[ \|0-9]*$", talentStat_handler),
+    (r"^/*(我的)?(今日|今天|明日|明天|周.*)?([五四54]星)?(技能|天赋)+(汇总|统计|列表)?[ \|0-9]*$", talentStat_handler),
     # ═══════════════════════════════════════════════════════════════
     #  Genshin plugin commands  (10)
     # ═══════════════════════════════════════════════════════════════
-    (r"^#(原神|星铁|绝区零)?(帮助|菜单|help)$", genshin_help_handler),
-    (r"^#(原神|星铁|绝区零)?(删除|解绑)uid(\s|\+)*([0-9]{1,2})?$", uid_unbind_handler),
-    (r"^#(原神|星铁|绝区零)?绑定(uid)?(\s|\+)*(((1[0-9]|[1-9])[0-9]{8}|[1-9][0-9]{7}))?$", uid_bind_handler),
-    (r"^#(原神|星铁|绝区零)?(我的)?(uid)[0-9]{0,2}$", uid_show_handler),
-    (r"^#(星铁)?(设置|配置)(.*)(别名|昵称)$", abbr_set_handler),
-    (r"^#(星铁)?删除(别名|昵称)(.*)$", abbr_del_handler),
-    (r"^#(星铁)?(.*)(别名|昵称)$", abbr_list_handler),
+    (r"^/(原神|星铁|绝区零)?(帮助|菜单|help)$", genshin_help_handler),
+    (r"^/(原神|星铁|绝区零)?(删除|解绑)uid(\s|\+)*([0-9]{1,2})?$", uid_unbind_handler),
+    (r"^/(原神|星铁|绝区零)?绑定(uid)?(\s|\+)*(((1[0-9]|[1-9])[0-9]{8}|[1-9][0-9]{7}))?$", uid_bind_handler),
+    (r"^/(原神|星铁|绝区零)?(我的)?(uid)[0-9]{0,2}$", uid_show_handler),
+    (r"^/(星铁)?(设置|配置)(.*)(别名|昵称)$", abbr_set_handler),
+    (r"^/(星铁)?删除(别名|昵称)(.*)$", abbr_del_handler),
+    (r"^/(星铁)?(.*)(别名|昵称)$", abbr_list_handler),
     # -- Broadest profile matchers (catch-all) --
-    (r"^#*([^#]+)\s*(详细|详情|面板|面版|圣遗物|遗器)\s*(\d{9,10})*$", profileDetail_handler),
-    (r"^#*([^#]+)\s*(伤害|伤害\d+)\s*(\d{9,10})*$", damageCalc_handler),
+    (r"^/*([^/]+)\s*(详细|详情|面板|面版|圣遗物|遗器)\s*(\d{9,10})*$", profileDetail_handler),
+    (r"^/*([^/]+)\s*(伤害|伤害\d+)\s*(\d{9,10})*$", damageCalc_handler),
 ]
 
 
@@ -132,7 +140,7 @@ class AstrBotMiaoPlugin(Star):
         super().__init__(context)
 
         # Initialise persistent UID binding store
-        from astrbot.core.utils.astrbot_path import get_astrbot_data_path
+        from astrbot.api import get_astrbot_data_path
         data_path = str(Path(get_astrbot_data_path()) / "plugin_data" / "miao")
         Path(data_path).mkdir(parents=True, exist_ok=True)
         self._uid_store = UIDStore(data_path)
@@ -164,6 +172,9 @@ class AstrBotMiaoPlugin(Star):
 
         e = MiaoEvent(event, admins=self._admins)
         await resolve_uid(e, self._uid_store)
+        if not e.game and handler not in _NO_GAME_HANDLERS:
+            e.reply("请在命令前添加游戏名，如 /原神面板 或 /星铁面板")
+            return
         await handler(e)
 
         # Ensure tmp dir for temp images

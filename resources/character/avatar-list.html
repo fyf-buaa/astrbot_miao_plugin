@@ -1,0 +1,21 @@
+{% extends elemLayout %}
+{% block css %}
+<link rel="stylesheet" type="text/css" href="{{ _res_path }}/character/avatar-list.css"/>
+<link rel="stylesheet" type="text/css" href="{{ _res_path }}/common/tpl.css"/>
+{% endblock %}
+{% block main %}
+<div class="cont avatar-cont">
+  <div class="cont-title">角色列表</div>
+  <div class="avatar-list">
+    {% for avatar in chars %}
+    <div class="avatar-card">
+      <div class="avatar-face star{{ avatar.star }}" style="background-image:url({{ _res_path }}{{ avatar.face }})"></div>
+      <div class="avatar-info">
+        <div class="avatar-name">{{ avatar.name }}</div>
+        <div class="avatar-detail">Lv.{{ avatar.level }} C{{ avatar.cons }}</div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

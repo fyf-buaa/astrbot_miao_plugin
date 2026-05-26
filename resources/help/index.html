@@ -1,0 +1,39 @@
+{% extends defaultLayout %}
+{% block css %}
+<link rel="stylesheet" type="text/css" href="{{ _res_path }}/help/index.css"/>
+{{ style | safe }}
+{% endblock %}
+{% block main %}
+<div class="help-body">
+  <div class="help-header">
+    <div class="help-header-bg"></div>
+    <div class="help-header-content">
+      <div class="help-title">{{ helpCfg.title or "使用帮助" }}</div>
+      <div class="help-subtitle">{{ helpCfg.subTitle or "Yunzai-Bot & Miao-Plugin" }}</div>
+    </div>
+  </div>
+  {% for group in helpGroup %}
+  {% set len = group.list | length %}
+  <div class="help-group-box">
+    <div class="help-group-header">
+      <span class="help-group-icon"></span>
+      <span class="help-group-name">{{ group.group }}</span>
+      {% if group.desc %}<span class="help-group-desc">{{ group.desc }}</span>{% endif %}
+    </div>
+    {% if len > 0 %}
+    <div class="help-items">
+      {% for help in group.list %}
+      <div class="help-item">
+        <div class="help-item-icon" style="{{ help.css or "" }}"></div>
+        <div class="help-item-body">
+          <div class="help-item-title">{{ help.title }}</div>
+          <div class="help-item-desc">{{ help.desc }}</div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}

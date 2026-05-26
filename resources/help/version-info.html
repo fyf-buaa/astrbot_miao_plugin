@@ -1,0 +1,44 @@
+{% extends elemLayout %}
+{% block css %}
+<link rel="stylesheet" type="text/css" href="{{ _res_path }}/help/version-info.css"/>
+{% endblock %}
+{% block main %}
+{% for ds in changelogs %}
+{% set v = ds.version %}
+{% set is_dev = v[-1] == "v" %}
+<div class="hydro-bg log-cont">
+  <div class="cont {{ "dev-cont" if is_dev else "" }}">
+    {% if loop.first %}
+    <div class="cont-title current-version">当前版本 {{ v }}</div>
+    {% if v[-1] == "v" %}
+    <div class="dev-info cont-body">
+      <div class="strong">【Dev测试分支，开发中】</div>
+      <ul class="log-ul">
+        <li>如需体验可切换至<span class="cmd">miao-plugin</span>仓库<span class="cmd">dev</span>分支</li>
+        <li>Dev功能可能不稳定，建议具备一定排错能力的勇士体验</li>
+      </ul>
+    </div>
+    {% endif %}
+    {% else %}
+    <div class="cont-title">喵喵版本 {{ v }}</div>
+    {% endif %}
+    <div class="cont-body">
+      <ul class="log-ul">
+        {% for log in ds.logs %}
+        <li>
+          <p>{{ log.title | safe }}</p>
+          {% if log.logs | length > 0 %}
+          <ul class="sub-log-ul">
+            {% for ls in log.logs %}
+            <li>{{ ls | safe }}</li>
+            {% endfor %}
+          </ul>
+          {% endif %}
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+</div>
+{% endfor %}
+{% endblock %}

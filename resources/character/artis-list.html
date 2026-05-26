@@ -1,0 +1,40 @@
+{% extends elemLayout %}
+{% block css %}
+<link rel="stylesheet" type="text/css" href="{{ _res_path }}/character/profile-detail.css" />
+<link rel="stylesheet" type="text/css" href="{{ _res_path }}/character/artis-list.css" />
+{% endblock %}
+{% block main %}
+<div class="uid">UID {{ uid }}</div>
+<div class="profile-cont game-{{ game }}">
+  <div class="artis">
+    {% for ds in artis %}
+    <div class="item arti">
+      {% if ds and ds.name and ds.main and ds.main.key and ds.main.key != "undefined" %}
+      <div class="avatar">
+        <img src="{{ _res_path }}{{ ds.side }}" />
+      </div>
+      <div class="arti-icon">
+        <div class="img" style="background-image:url({{ _res_path }}{{ ds.img }})"></div>
+      </div>
+      <div class="head">
+        <strong>{{ ds.name }}</strong>
+        <span class="mark mark-{{ ds.markClass }}"><span>{{ ds.mark }}分</span> - {{ ds.markClass }}</span>
+      </div>
+      <ul class="detail attr">
+        <li class="arti-main"><span class="title">{{ artisKeyTitle[ds.main.key] if artisKeyTitle and ds.main.key in artisKeyTitle else '' }}</span><span class="val">+{{ ds.main.value }}</span></li>
+        {% for attr in ds.attrs %}
+        {% if attr and attr.key %}
+        {% set cw = ds.charWeight[attr.key]|float if ds.charWeight and attr.key in ds.charWeight else 0 %}
+        <li class="{% if cw > 79.9 %}great{% elif cw > 0 %}useful{% else %}nouse{% endif %}">
+          <span class="title">{% if attr.eff %}<i class="eff">{{ attr.eff }}</i>{% endif %}{% if attr.upNum %}<i class="up-num up-{{ attr.upNum }}"></i>{% endif %}{{ artisKeyTitle[attr.key] if artisKeyTitle and attr.key in artisKeyTitle else attr.key }}</span>
+          <span class="val">+{{ attr.value }}</span>
+        </li>
+        {% endif %}
+        {% endfor %}
+      </ul>
+      {% endif %}
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

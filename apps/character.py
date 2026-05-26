@@ -4,7 +4,7 @@ from ..adapter import MiaoEvent
 from ..apps._avatar_wife import _build_wife_regex, wife_render
 from ..apps._character_card import card_render
 
-CHARACTER_PATTERN: str = r"^#喵喵角色卡片$"
+CHARACTER_PATTERN: str = r"^/喵喵角色卡片$"
 WIFE_PATTERN: str = _build_wife_regex()
 
 

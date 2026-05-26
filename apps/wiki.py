@@ -6,12 +6,12 @@ from ._today_material import today_material
 from ._wiki_char import character_talent, character_wiki
 
 # ── Regex patterns (preserved from py_miao_plugin) ─────────────────────
-WIKI_PATTERN: str = r"^#喵喵WIKI$"
-CHAR_WIKI_PATTERN: str = r"^#(.+)(WIKI|wiki|资料|百科)$"
-CALENDAR_PATTERN: str = r"^(#|喵喵)+(日历|日历列表)$"
-TODAY_MATERIAL_PATTERN: str = r"^#(今日|今天)?(素材|材料|天赋)[ \|0-9]*$"
-CHAR_TALENT_PATTERN: str = r"^#(.+)(天赋|技能)(表|数据)?$"
-CHAR_MATERIAL_PATTERN: str = r"^#(.+)(材料|突破)$"
+WIKI_PATTERN: str = r"^/喵喵WIKI$"
+CHAR_WIKI_PATTERN: str = r"^/(.+)(WIKI|wiki|资料|百科)$"
+CALENDAR_PATTERN: str = r"^(喵喵)?(日历|日历列表)$"
+TODAY_MATERIAL_PATTERN: str = r"^/(今日|今天)?(素材|材料|天赋)[ \|0-9]*$"
+CHAR_TALENT_PATTERN: str = r"^/(.+)(天赋|技能)(表|数据)?$"
+CHAR_MATERIAL_PATTERN: str = r"^/(.+)(材料|突破)$"
 
 # ── Handler functions ──────────────────────────────────────────────────
 

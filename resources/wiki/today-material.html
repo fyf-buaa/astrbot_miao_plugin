@@ -1,0 +1,70 @@
+{% extends defaultLayout %}
+{% block css %}
+<link rel="stylesheet" type="text/css" href="{{ _res_path }}/wiki/today-material.css"/>
+{% endblock %}
+{% block main %}
+<div class="main_box">
+  <div class="base_info">
+    <div class="id"><span>ID：{{ uid }}</span></div>
+    <div class="day"><span>{{ day }}</span></div>
+  </div>
+  {% for cd in data %}
+  <div class="city-cont">
+    <div class="cont-title">
+      <div class="area">
+        <img class="tab-item-icon" src="{{ _res_path }}/common/item/{{ cd.city }}.png"/>
+        <div class="tab-item-text">{{ cd.city }}</div>
+      </div>
+      <div class="ele_box">
+        <div class="ele_name">{{ cd.material.name }}</div>
+        <div class="ele_img">
+          {% for icon in cd.material.icons %}
+          <div class="img_item">
+            <span class="icon" style="background-image:url({{ _res_path }}{{ icon }})"></span>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+      <div class="tab-line"></div>
+    </div>
+    {% if cd.type == "talent" %}
+    <div class="item_box">
+      {% for char in cd.data %}
+      <div class="item {{ 'disable' if char.isMax else '' }} avatar-card">
+        <div class="role_box">
+          {% if char.cons > 0 %}<span class="life life{{ char.cons }}">{{ char.cons }}命</span>{% endif %}
+          <div class="bg{{ char.star }}"></div>
+          <img class="role_img" src="{{ _res_path }}{{ char.face }}"/>
+          <div class="desc">Lv.{{ char.level }}</div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+    {% if cd.type == "weapon" %}
+    <div class="weapon_box">
+      {% for weapon in cd.data %}
+      <div class="weapon_item {{ 'disable' if weapon.isMax else '' }}">
+        <span class="weapon_user">
+          <span class="user_img" style="background-image:url({{ _res_path }}{{ weapon.face }})"></span>
+        </span>
+        <div class="weapon_role_box">
+          {% if weapon.affix > 1 %}<span class="life life{{ weapon.affix }}">{{ weapon.affix }}</span>{% endif %}
+          <div class="weapon_bg bg{{ weapon.star }}"></div>
+          <span class="weapon_role_img" style="background-image:url({{ _res_path }}{{ weapon.icon }})"></span>
+          <div class="desc_1">Lv.{{ weapon.level }}</div>
+        </div>
+        <div class="role_name">{{ weapon.abbr }}</div>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+  </div>
+  {% endfor %}
+</div>
+<div class="explain">
+  * 根据你所拥有的角色查询今天可升天赋角色，仅显现已装备的武器<br>
+  * 可通过【#练度统计】（需具备CK），或【#更新面板】更新本地缓存<br>
+  * 绑定CK用户也可通过【#刷新天赋】来强制更新天赋数据
+</div>
+{% endblock %}

@@ -1,0 +1,93 @@
+{% extends elemLayout %}
+{% block css %}
+<link rel="stylesheet" type="text/css" href="{{ _res_path }}/character/rank-profile-list.css"/>
+{{ bodyContainerStyle | safe }}
+{% endblock %}
+{% set talent_map = {"a": "普攻", "e": "战技", "q": "爆发"} %}
+{% set game_hash = "#" %}
+{% block main %}
+<div class="head-box">
+  <div class="title">{{ title }}</div>
+</div>
+<div id="profile-stat">
+  <div class="cont group-rank-tip {{ "has-rank" if True else "no-rank" }}">
+    <div class="cont-title">群排名说明</div>
+    <div class="cont-body">
+      <ul class="cont-msg">
+        <li><i class="group-rank-icon dmg-icon"></i><strong>综合练度排名：</strong>以期望伤害为排序的群内排名</li>
+        <li><i class="group-rank-icon mark-icon"></i><strong>圣遗物评分排名：</strong>基于角色评分规则进行圣遗物评分</li>
+        <li><i class="group-rank-icon mark-icon"></i><strong>双爆排名：</strong>以圣遗物的双爆为排序的群内排名</li>
+        <li><i class="group-rank-icon mark-icon"></i><strong>加权有效词条排名：</strong>以圣遗物的加权有效词条为排序的群内排名</li>
+        <li><strong>排名范围：</strong>本群内 / 时间点：{{ rankCfg.time }} 后 / 在群内主动通过 {{ game_hash }}面板 命令查看过的面板数据</li>
+        {% if rankCfg.limitTxt != "无限制" %}
+        <li><strong>排名参与条件：</strong> {{ rankCfg.limitTxt }}</li>
+        <li><strong>排名人数：</strong> {{ rankCfg.number }}</li>
+        {% endif %}
+      </ul>
+    </div>
+  </div>
+  {% for ds in list %}
+  <div class="cont char-list-item">
+    <div class="char-idx">
+      <span class="idx-icon idx-{{ loop.index }} mode-{{ mode }}">{{ loop.index }}</span>
+    </div>
+    <div class="item-icon char-icon star{{ ds.star }}">
+      <span class="img" style="background-image:url({{ _res_path }}{{ ds.imgs.face }})"></span>
+    </div>
+    <div class="char-info char-name">
+      <div class="name">
+        <span class="cons cons-{{ ds.cons }}">{{ ds.cons }}</span>
+        <strong>{{ ds.sName }}</strong>
+      </div>
+      <div class="info">{{ ds.uid }}</div>
+    </div>
+    <div class="char-talent elem-{{ ds.elem }}">
+      {% for key, tname in talent_map.items() %}
+      {% set t = ds.talent.get(key, {}) %}
+      <div class="talent-item">
+        <div class="talent-icon {{ "talent-plus" if t.get("level", 0) > t.get("original", 0) else "" }} {{ "talent-crown" if t.get("original", 0) >= 10 else "" }}">
+          <div class="talent-icon-img" style="background-image:url({{ _res_path }}{{ ds.imgs.get(key, "") }})"></div>
+          <span>{{ t.get("level", 1) }}</span>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    <div class="char-item char-weapon line">
+      {% set w = ds.weapon %}
+      <div class="item item-icon star{{ w.star }}">
+        <div class="img" style="background-image:url({{ _res_path }}{{ w.img }})"></div>
+      </div>
+      <div class="char-info weapon-info">
+        <div class="name"><strong>{{ w.name[:6] }}</strong></div>
+        <div class="info"><span class="cons cons-{{ w.affix }}">精{{ w.affix }}</span> Lv.{{ w.level }}</div>
+      </div>
+    </div>
+    {% set mark = ds.artisMark or {} %}
+    {% set aImgs = ds.artisSet.imgs or [] %}
+    <div class="char-item char-artis class-{{ mark.markClass or "D" }}">
+      <div class="item artis item-icon avatar-artis {{ "star5" if aImgs else "no-artis" }} artis{{ 2 if aImgs|length > 2 else aImgs|length }}">
+        {% for img in aImgs[:2] %}
+        <div class="img" style="background-image:url({{ _res_path }}{{ img }})"></div>
+        {% endfor %}
+        {% if not aImgs %}
+        <span class="img no-artis"></span>
+        {% endif %}
+      </div>
+      <div class="char-info artis-info">
+        <div class="name artis-title">{{ ds.artisSet.sName }}</div>
+        <div class="artis-mark">
+          <span class="cons artis-mark-class class-{{ mark.markClass or "D" }}">{{ mark.markClass or "D" }}</span>
+          {{ ds._formatmark }}
+        </div>
+      </div>
+    </div>
+    <div class="char-dmg line">
+      {% if ds.dmg %}
+      <div class="dmg-title">{{ ds.dmg.title }}</div>
+      <div class="dmg-value">{{ ds.dmg.avg }}</div>
+      {% endif %}
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}

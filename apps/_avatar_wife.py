@@ -51,7 +51,7 @@ def _set_user_wife_list(user_id: str, key: str, names: list[str]) -> None:
 
 
 def _build_wife_regex() -> str:
-    return rf"^#\s*({'|'.join(_ALL_KEYWORDS)})\s*(设置|选择|指定|添加|列表|查询|是|是谁|照片|相片|图片|写真|图像)?\s*([^\d]*)\s*(\d*)$"
+    return rf"^/\s*({'|'.join(_ALL_KEYWORDS)})\s*(设置|选择|指定|添加|列表|查询|是|是谁|照片|相片|图片|写真|图像)?\s*([^\d]*)\s*(\d*)$"
 
 
 def _get_avatars_by_type(player: Any, wtype: int | None = None) -> list[Any]:

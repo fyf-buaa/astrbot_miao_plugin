@@ -1,0 +1,103 @@
+{% extends elemLayout %}
+{% block css %}
+<link rel="stylesheet" type="text/css" href="{{ _res_path }}/wiki/character-talent.css"/>
+{% endblock %}
+{% block main %}
+<div class="head-box" style="background-image:url('{{ _res_path }}{{ imgs.card }}')">
+  <div class="head">
+    <img src="{{ _res_path }}{{ imgs.qFace or imgs.face }}"/>
+  </div>
+  <div class="head-detail">
+    <div class="name">
+      {% if game == 'gs' %}{{ title }}·{{ name }}{% else %}{{ name }}{% endif %}
+    </div>
+    <div class="desc">
+      {% if game == 'gs' %}{{ desc }}{% else %}{{ detail.desc }}{% endif %}
+    </div>
+  </div>
+  {% if line and line[0] and line[0].num != 'NaN' %}
+  <div class="data-box">
+    <div class="tab-label">{{ '100' if game == 'gs' else '80' }}级基础数据</div>
+    <div class="data-line">
+      {% for item in line %}
+      <div class="data_line_item">
+        <div class="num">{{ item.num }}</div>
+        <div class="label">{{ item.label }}</div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% else %}
+  <div class="data-box">
+    <div class="tab-label">100级基础数据</div>
+    <div class="data-line">暂无详细数据</div>
+  </div>
+  {% endif %}
+</div>
+
+{% if mode == "talent" %}
+{% set talentKey = ['a','e','q','t','z','xe','me','mt'] %}
+{% for type in talentKey %}
+{% if detail.talent[type] %}
+<div class="talent-box elem-bg">
+  <div class="talent-detail cont {{ 'talent-merge' if detail.talent[type + '2'] else '' }}">
+    {% set _td_detail = detail.talent[type] %}
+    {% set _td_icon = imgs[type] %}
+    {% set _td_type = type %}
+    {% set _td_minLv = 6 if game == 'gs' else (1 if type in ('a','me','mt') else 6) %}
+    {% set _td_maxLv = 13 if game == 'gs' else (7 if type in ('a','me','mt') else 12) %}
+    {% include 'common/tpl/talent-detail.html' %}
+    {% for num in ['1','2'] %}
+    {% if detail.talent[type + num] %}
+    {% set _td_detail = detail.talent[type + num] %}
+    {% set _td_icon = imgs[type + num] %}
+    {% set _td_type = type + num %}
+    {% set _td_minLv = 6 if game == 'gs' else (1 if type + num in ('a','a2','me','me2','mt','mt1','mt2') else 6) %}
+    {% set _td_maxLv = 13 if game == 'gs' else (7 if type + num in ('a','a2','me','me2','mt','mt1','mt2') else 12) %}
+    {% include 'common/tpl/talent-detail.html' %}
+    {% endif %}
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
+{% endfor %}
+
+<div class="talent-box elem-bg">
+  <div class="talent-detail passive-talent">
+    {% if game == 'gs' %}
+    {% for pass in detail.passive %}
+    {% set _td_detail = pass %}
+    {% set _td_icon = imgs['passive' ~ loop.index0] %}
+    {% set _td_minLv = 0 %}
+    {% set _td_maxLv = 999 %}
+    {% include 'common/tpl/talent-detail.html' %}
+    {% endfor %}
+    {% else %}
+    {% for treeData in detail.treeData %}
+    {% if treeData.type == 'skill' %}
+    {% set _td_detail = treeData %}
+    {% set _td_icon = imgs['tree' ~ treeData.idx] %}
+    {% set _td_minLv = 0 %}
+    {% set _td_maxLv = 999 %}
+    {% include 'common/tpl/talent-detail.html' %}
+    {% endif %}
+    {% endfor %}
+    {% endif %}
+  </div>
+</div>
+{% endif %}
+
+{% if mode == "cons" %}
+<div class="talent-box elem-bg">
+  <div class="talent-detail">
+    {% for con in detail.cons %}
+    {% set _td_detail = con %}
+    {% set _td_icon = imgs['cons' ~ loop.index0] %}
+    {% set _td_minLv = 0 %}
+    {% set _td_maxLv = 999 %}
+    {% include 'common/tpl/talent-detail.html' %}
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
+{% endblock %}

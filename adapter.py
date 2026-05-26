@@ -122,7 +122,7 @@ async def resolve_uid(e: MiaoEvent, uid_store) -> None:
                 default = await uid_store.get_default_game(qq)
             except Exception:
                 pass
-        e.game = default or "gs"
+        e.game = default or ""
 
     # 3. Look up UID from the binding map for the detected game
     if e.game == "gs":
@@ -153,3 +153,11 @@ async def resolve_uid(e: MiaoEvent, uid_store) -> None:
         "resolve_uid qq=%s msg=%s game=%s uid=%s",
         qq, msg, e.game, e.uid,
     )
+
+
+def require_game(e) -> bool:
+    """Check if game is resolved. If not, reply with prompt. Returns True if game is set."""
+    if e.game:
+        return True
+    e.reply("请在命令前添加游戏名，如 /原神面板 或 /星铁面板")
+    return False

@@ -1,0 +1,23 @@
+{% extends defaultLayout %}
+{% block css %}
+<link rel="stylesheet" type="text/css" href="{{ _res_path }}/profile/profile.css"/>
+{% endblock %}
+{% block main %}
+<div class="info-box">
+  <div class="head-box">
+    <div class="title">{{ playerName }}</div>
+    <div class="label">角色面板列表</div>
+  </div>
+</div>
+<div class="cont-box">
+  <div class="char-list">
+    {% for c in characters %}
+    <div class="char-item">
+      <img class="char-face" src="{{ c.face }}" alt="{{ c.name }}">
+      <div class="char-name">{{ c.name }}</div>
+      <div class="char-info">Lv.{{ c.level }} C{{ c.cons }}</div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

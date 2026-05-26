@@ -1,0 +1,127 @@
+{% extends elemLayout %}
+{% block css %}
+<link rel="stylesheet" type="text/css" href="{{ _res_path }}/common/tpl.css"/>
+<link rel="stylesheet" type="text/css" href="{{ _res_path }}/character/profile-detail.css"/>
+<link rel="stylesheet" type="text/css" href="{{ _res_path }}/wiki/character-wiki.css"/>
+{% endblock %}
+{% block main %}
+<div class="basic">
+  <div class="main-pic" style="background-image:url({{ _res_path }}{{ imgs.splash }})"></div>
+  <div class="detail">
+    <div class="char-title">
+      <div class="char-name"><span>{{ data.title }} · </span>{{ data.name }}</div>
+      <div class="char-lv char-desc">{{ data.desc }}</div>
+    </div>
+    <div class="char-meta">
+      <div class="cont">
+        <ul class="attr char-attr">
+          <li><strong>武器类型</strong> <span>{{ data.weaponTypeName }}</span></li>
+          <li><strong>命之座</strong> <span>{{ data.astro }}</span></li>
+          <li><strong>生日</strong> <span>{{ data.birthday }}</span></li>
+          <li><strong>归属</strong> <span>{{ data.allegiance }}</span></li>
+          <li><strong>中文CV</strong> <span>{{ data.cncv }}</span></li>
+          <li><strong>日文CV</strong> <span>{{ data.jpcv }}</span></li>
+        </ul>
+      </div>
+      <div class="cont">
+        <div class="cont-title">100级基础属性{% if data.star %}（{{ data.star }}星）{% endif %}</div>
+        <ul class="attr char-attr">
+          {% for ds in attr %}
+          <li><strong>{{ ds.title }}</strong> <span>{{ ds.value }}</span></li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="material-list">
+    {% for ds in materials %}
+    <div class="material-{{ ds.type }}">
+      <div class="num">{{ ds.num }}</div>
+      <div class="item-card material-card">
+        <div class="item-icon star{{ ds.star }} opacity-bg">
+          <div class="item-bg" style="background-image:url({{ _res_path }}{{ ds.icon }})"></div>
+        </div>
+        <div class="item-title">{{ ds.label }}</div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+<div class="wiki-cont">
+  {% if holding and holding.num %}
+  {% set cNum = '零一二三四五满'|list %}
+  <div class="cont cont-bg">
+    <div class="char-holding">
+      <div class="char-pct">
+        <div class="avg-stats">
+          <div class="avg-label-level">平均等级</div>
+          <div class="avg-level">{{ holding.avgLevel }}</div>
+          <div class="avg-line"></div>
+          <div class="avg-cons">{{ holding.avgCons }}</div>
+          <div class="avg-label-cons">平均命座</div>
+        </div>
+      </div>
+      <div class="char-cons">
+        {% for cons in holding.cons %}
+        <div class="cons-item cons{{ cons.cons }}">
+          <div class="talent-icon">
+            {% if cons.cons > 0 %}
+            <div class="talent-icon-img" style="background-image:url({{ _res_path }}{{ imgs['cons' ~ cons.cons] }})"></div>
+            {% else %}
+            <div class="talent-icon-img" style="background-image:url({{ _res_path }}common/item/cons0.webp)"></div>
+            {% endif %}
+          </div>
+          <div class="cons-num">{{ cons.num }}</div>
+          <div class="cons-title">{{ cNum[cons.cons] }}命</div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+  {% endif %}
+
+  <div class="talent-notice">输入<strong>#{{ data.abbr or '' }}天赋、#{{ data.abbr or '' }}命座</strong>可查看详细天赋/命座信息</div>
+  {% set weapons = usage.weapons if usage and usage.weapons else [] %}
+  {% if weapons|length > 0 %}
+  <div class="cont">
+    <div class="cont-title border-less">常用武器</div>
+    <div class="item-list weapon-list">
+      {% for weapon in weapons %}
+      {% if loop.index0 < 7 %}
+      <div class="item item-card">
+        <div class="item-icon star{{ weapon.star }}">
+          <div class="item-bg" style="background-image:url({{ _res_path }}{{ weapon.img }})"></div>
+        </div>
+        <div class="item-value">{{ weapon.value }}</div>
+        <div class="item-title">{{ weapon.abbr }}</div>
+      </div>
+      {% endif %}
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+  {% set artis = usage.artis if usage and usage.artis else [] %}
+  {% if artis|length > 0 %}
+  <div class="cont">
+    <div class="cont-title border-less">常用圣遗物<span>持有率、武器、圣遗物统计来自提瓦特小助手API，未经允许请勿使用此数据</span></div>
+    <div class="item-list weapon-list artis-list">
+      {% for arti in artis %}
+      {% if loop.index0 < 7 %}
+      <div class="item item-card">
+        <div class="item-icon star5 artis-count{{ arti.imgs|length }}">
+          {% for img in arti.imgs %}
+          <div class="item-bg artis{{ loop.index }}" style="background-image:url({{ _res_path }}{{ img }})"></div>
+          {% endfor %}
+        </div>
+        <div class="item-value">{{ arti.value }}</div>
+        <div class="item-title">{{ arti.title }}</div>
+      </div>
+      {% endif %}
+      {% endfor %}
+    </div>
+  </div>
+  <div class="talent-notice"></div>
+  {% endif %}
+</div>
+{% endblock %}

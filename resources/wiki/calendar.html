@@ -1,0 +1,43 @@
+{% extends elemLayout %}
+{% block css %}
+<link rel="stylesheet" type="text/css" href="{{ _res_path }}/wiki/calendar.css"/>
+{% endblock %}
+{% set weekName = '一二三四五六日'|list %}
+{% block main %}
+<div class="calendar">
+  <div class="cal-bg for-calendar-mode">
+    <table class="cont-table">
+      <tr class="tr thead">
+        {% for d in dateList %}
+        <td colspan="{{ d.date|length }}" class="td month">{{ d.month }}月</td>
+        {% endfor %}
+      </tr>
+      <tr class="tr thead">
+        {% for d in dateList %}{% for dn in d.date %}
+        <td class="td date{{ ' current-date' if dn == nowDate else '' }}">
+          <span class="date-num">{{ dn }}日</span>
+          <span class="date-week">周{{ weekName[d.week[loop.index0]] }}</span>
+        </td>
+        {% endfor %}{% endfor %}
+      </tr>
+      <tr class="tr">
+        {% for d in dateList %}{% for dn in d.date %}
+        <td class="line{{ ' current-date' if dn == nowDate else '' }}">
+          {% if game == 'gs' %}
+          {% set mmdd = d.month ~ '-' ~ dn %}
+          {% for char in charBirth.get(mmdd, []) %}
+          <div class="card">
+            <div class="item-icon star{{ char.star }}">
+              <div class="img" style="background-image:url({{ _res_path }}{{ char.face }})"></div>
+              <span class="char-name">{{ char.name[:4] }}生日</span>
+            </div>
+          </div>
+          {% endfor %}
+          {% endif %}
+        </td>
+        {% endfor %}{% endfor %}
+      </tr>
+    </table>
+  </div>
+</div>
+{% endblock %}

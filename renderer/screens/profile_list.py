@@ -85,3 +85,7 @@ async def render_profile_list(data: dict[str, Any]) -> bytes:
 
     draw_footer(c, cw, ch - footer_h)
     return c.to_bytes()
+
+
+# Alias for avatar-list template (used by renderer/__init__.py)
+render_avatar_list = render_profile_list

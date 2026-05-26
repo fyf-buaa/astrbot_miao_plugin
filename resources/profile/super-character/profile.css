@@ -1,0 +1,118 @@
+body,
+.container {
+  width: 800px;
+}
+.profile-cont {
+  margin: 15px;
+}
+.profile-header {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 20px;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 12px;
+  margin-bottom: 15px;
+}
+.char-side img {
+  width: 160px;
+  height: auto;
+  border-radius: 8px;
+}
+.char-name {
+  font-size: 36px;
+  font-weight: bold;
+  color: #fff;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+.char-attr {
+  font-size: 16px;
+  color: #ccc;
+  margin-top: 6px;
+}
+.char-attr span {
+  margin-right: 12px;
+}
+.weapon-info {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 15px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+  margin-bottom: 15px;
+}
+.weapon-icon img {
+  width: 64px;
+  height: 64px;
+}
+.weapon-name {
+  font-size: 18px;
+  color: #fff;
+}
+.weapon-stats {
+  font-size: 14px;
+  color: #aaa;
+  margin-top: 4px;
+}
+.talent-info {
+  display: flex;
+  gap: 10px;
+  padding: 15px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+  margin-bottom: 15px;
+}
+.talent-item {
+  text-align: center;
+  padding: 8px 16px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+}
+.talent-key {
+  font-size: 14px;
+  color: #888;
+  display: block;
+}
+.talent-lv {
+  font-size: 20px;
+  color: #fff;
+  font-weight: bold;
+  display: block;
+  margin-top: 4px;
+}
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  padding: 15px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+  margin-bottom: 15px;
+}
+.stat-item {
+  text-align: center;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+}
+.stat-value {
+  font-size: 22px;
+  color: #fff;
+  font-weight: bold;
+}
+.stat-label {
+  font-size: 13px;
+  color: #888;
+  margin-top: 4px;
+}
+.artis-set-info {
+  padding: 12px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+  text-align: center;
+}
+.set-name {
+  font-size: 16px;
+  color: #ddd;
+}

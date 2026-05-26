@@ -48,5 +48,5 @@ async def req(e: Any, player: Any, from_mys: bool = False) -> int | bool:
     except Exception as err:
         logging.error("[serv] req exception uid=%s game=%s: %s", uid, player.game, err, exc_info=True)
         if not getattr(e, "_isReplyed", False):
-            await e.reply(f"UID:{uid}更新面板失败")
+            e.reply(f"UID:{uid}更新面板失败")
         return False

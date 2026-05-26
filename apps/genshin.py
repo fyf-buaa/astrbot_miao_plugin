@@ -44,7 +44,7 @@ async def help_handler(e: MiaoEvent) -> None:
     """Show genshin-specific help text."""
     e.reply(
         "genshin 可用入口\n"
-        "#绑定uid / #uid\n"
+        "/绑定uid / /uid\n"
     )
 
 
@@ -158,9 +158,9 @@ async def uid_show_handler(e: MiaoEvent) -> None:
 
 # ── Alias helpers ───────────────────────────────────────────────────
 
-_COMMAND_PREFIX_RE = re.compile(r"^#(?:星铁)?(?:设置|配置)")
+_COMMAND_PREFIX_RE = re.compile(r"^/(?:星铁)?(?:设置|配置)")
 _ALIAS_SUFFIX_RE = re.compile(r"(别名|昵称).*$")
-_DEL_PREFIX_RE = re.compile(r"^#(?:星铁)?删除(?:别名|昵称)")
+_DEL_PREFIX_RE = re.compile(r"^/(?:星铁)?删除(?:别名|昵称)")
 
 
 def _extract_role_name(msg: str) -> str | None:
