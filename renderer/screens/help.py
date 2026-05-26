@@ -4,7 +4,7 @@ import re
 from typing import Any
 
 from .. import make_canvas
-from app.render.pillow_elements import (
+from ...vendored.pillow_elements import (
     draw_panel_header, TEXT_DARK, TEXT_MED, TEXT_LIGHT, ACCENT_BLUE,
     BG_CARD, PADDING, CARD_PADDING, CARD_GAP,
 )

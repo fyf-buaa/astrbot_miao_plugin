@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import Any
 
 from .. import make_canvas
-from app.render.pillow_elements import (
+from ...vendored.pillow_elements import (
     draw_footer, draw_shadow_panel,
     TEXT_DARK, TEXT_LIGHT, BG_CARD,
     PADDING, CARD_PADDING, elem_color,

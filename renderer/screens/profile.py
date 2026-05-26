@@ -6,7 +6,7 @@ from pathlib import Path
 
 from .. import make_canvas
 from ...tools.path import miao_path
-from app.render.pillow_elements import (
+from ...vendored.pillow_elements import (
     draw_panel_header, draw_footer, draw_stars, draw_shadow_panel,
     draw_section_title, draw_badge, draw_horiz_line,
     BG_PAGE, TEXT_DARK, TEXT_MED, TEXT_LIGHT, ACCENT_BLUE, BG_CARD,

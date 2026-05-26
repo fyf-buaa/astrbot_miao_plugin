@@ -146,13 +146,13 @@ class AstrBotMiaoPlugin(Star):
     #  Literal @filter.command handlers  (5)
     # ═══════════════════════════════════════════════════════════════
 
-    @filter.command("help")
+    @filter.command("help", alias={"帮助", "菜单", "命令", "说明", "功能", "指令", "使用说明"})
     async def help_cmd(self, event: AstrMessageEvent) -> Any:
         """帮助/菜单"""
         async for result in self._run_handler(event, help_handler):
             yield result
 
-    @filter.command("version")
+    @filter.command("version", alias={"版本", "喵喵版本"})
     async def version_cmd(self, event: AstrMessageEvent) -> Any:
         """版本信息"""
         async for result in self._run_handler(event, version_handler):
