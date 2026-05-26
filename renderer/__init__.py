@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import logging
 from pathlib import Path
 from typing import Any
 
@@ -7,10 +8,19 @@ from ..vendored.pillow_canvas import Canvas
 from ..vendored.pillow_assets import AssetLoader
 
 from ..tools.path import miao_path
+from ..tools.font_init import ensure_fonts
+
+logger = logging.getLogger("astrbot_plugin_miao.renderer")
 
 _miao_res = Path(f"{miao_path}/resources")
 _miao_font = _miao_res / "common" / "font"
 _miao_assets = AssetLoader(_miao_res)
+
+# Ensure Chinese fonts are available at import time
+try:
+    ensure_fonts(_miao_font)
+except Exception as e:
+    logger.warning("Font initialization failed: %s. Chinese text may not render.", e)
 
 
 def make_canvas(w: int, h: int, bg: tuple[int, ...] = (255, 255, 255, 255)) -> Canvas:
