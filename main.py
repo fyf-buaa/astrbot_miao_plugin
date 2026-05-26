@@ -110,7 +110,9 @@ class AstrBotMiaoPlugin(Star):
         super().__init__(context)
 
         # Initialise persistent UID binding store
-        data_path = str(Path(context.data_dir) / "astrbot_plugin_miao")
+        from astrbot.core.utils.astrbot_path import get_astrbot_data_path
+        data_path = str(Path(get_astrbot_data_path()) / "plugin_data" / "miao")
+        Path(data_path).mkdir(parents=True, exist_ok=True)
         self._uid_store = UIDStore(data_path)
 
         # Parse admin QQ set from AstrBot config
