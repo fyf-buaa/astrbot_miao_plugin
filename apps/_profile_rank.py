@@ -20,7 +20,7 @@ async def group_rank(e: Any) -> Any:
     game = "sr" if "星铁" in msg else "gs"
 
     if not Cfg.get("groupRank", False):
-        return await e.reply("群面板排名功能已禁用，Bot主人可通过【#喵喵设置】启用...")
+        e.reply("群面板排名功能已禁用，Bot主人可通过【#喵喵设置】启用..."); return
 
     typ = "mark"
     if re.search(r"(分|圣遗物|遗器|评分|ACE)", msg):
@@ -37,11 +37,11 @@ async def group_rank(e: Any) -> Any:
     char = Character.get(name, game) if name else None
 
     if not group_id and not (char and "极限" in msg):
-        return await e.reply("该命令仅在群聊中可用")
+        e.reply("该命令仅在群聊中可用"); return
 
     group_cfg = ProfileRank.get_group_cfg(group_id)
     if group_cfg.get("status") == 1:
-        return await e.reply("本群已关闭群排名，群管理员或Bot主人可通过【#启用排名】启用...")
+        e.reply("本群已关闭群排名，群管理员或Bot主人可通过【#启用排名】启用..."); return
 
     if "最强" in msg or "最高" in msg or "第一" in msg:
         return await _rank_detail(e, group_id, char, typ, game)
@@ -51,15 +51,15 @@ async def group_rank(e: Any) -> Any:
 
 async def _rank_detail(e: Any, group_id: int, char: Any, typ: str, game: str) -> Any:
     if not char:
-        return await e.reply("请指定角色名")
+        e.reply("请指定角色名"); return
     uids = ProfileRank.get_top_n(group_id, char.id, typ, 1)
     if not uids:
-        return await e.reply(f"暂无排名：请通过【{'*' if game == 'sr' else '#'}面板】查看角色面板以更新排名信息...")
+        e.reply(f"暂无排名：请通过【{'*' if game == 'sr' else '#'}面板】查看角色面板以更新排名信息..."); return
     target_uid = uids[0]["uid"]
     player = Player.create(target_uid, game)
     avatar = player.get_avatar(char.id)
     if not avatar or not avatar.is_profile:
-        return await e.reply("排名数据异常")
+        e.reply("排名数据异常"); return
     e.uid = target_uid
     from ._profile_detail import detail
     return await detail(e)
@@ -72,7 +72,7 @@ async def _rank_list(e: Any, group_id: int, char: Any, typ: str, game: str, grou
         uids = ProfileRank.get_top_per_char(group_id, typ, game)
 
     if not uids:
-        return await e.reply(f"暂无排名：请通过【{'*' if game == 'sr' else '#'}面板】查看角色面板以更新排名信息...")
+        e.reply(f"暂无排名：请通过【{'*' if game == 'sr' else '#'}面板】查看角色面板以更新排名信息..."); return
 
     rank_data_list: list[dict[str, Any]] = []
     for entry in uids:
@@ -165,30 +165,30 @@ async def _rank_list(e: Any, group_id: int, char: Any, typ: str, game: str, grou
 async def reset_rank(e: Any) -> Any:
     group_id = getattr(e, "group_id", None)
     if not group_id:
-        return await e.reply("该命令仅在群聊中可用")
+        e.reply("该命令仅在群聊中可用"); return
     if not getattr(e, "isMaster", False):
-        return await e.reply("只有管理员可重置排名")
+        e.reply("只有管理员可重置排名"); return
     msg = str(getattr(e, "msg", ""))
     game = "sr" if "星铁" in msg else "gs"
     name = re.sub(r"[#星铁重置重设排名排行群内面板详情面版]", "", msg).strip()
     if name:
         char = Character.get(name, game)
         if not char:
-            return await e.reply(f"重置排名失败，角色：{name}不存在")
+            e.reply(f"重置排名失败，角色：{name}不存在"); return
         ProfileRank.reset_group(group_id, char.id, game)
-        await e.reply(f"本群{char.name}排名已重置...")
+        e.reply(f"本群{char.name}排名已重置...")
     else:
         ProfileRank.reset_group(group_id)
-        await e.reply("本群全部角色排名已重置...")
+        e.reply("本群全部角色排名已重置...")
 
 
 async def refresh_rank(e: Any) -> Any:
     group_id = getattr(e, "group_id", None)
     if not group_id:
-        return await e.reply("该命令仅在群聊中可用")
+        e.reply("该命令仅在群聊中可用"); return
     if not getattr(e, "isMaster", False) and not getattr(e, "isAdmin", False):
-        return await e.reply("只有主人及群管理员可刷新排名...")
-    await e.reply("面板数据刷新中，等待时间可能较长，请耐心等待...")
+        e.reply("只有主人及群管理员可刷新排名..."); return
+    e.reply("面板数据刷新中，等待时间可能较长，请耐心等待...")
     game = "sr" if "星铁" in str(getattr(e, "msg", "")) else "gs"
     ProfileRank.reset_group(group_id, 0, game)
     uid_map = ProfileRank.get_all_uids_with_qq()
@@ -205,18 +205,18 @@ async def refresh_rank(e: Any) -> Any:
             await rank.get_rank_data(avatar, True)
         if rank.allow_rank:
             count += 1
-    await e.reply(f"本群排名已刷新，共刷新{count}个UID数据...")
+    e.reply(f"本群排名已刷新，共刷新{count}个UID数据...")
 
 
 async def manage_rank(e: Any) -> Any:
     group_id = getattr(e, "group_id", None)
     if not group_id:
-        return await e.reply("该命令仅在群聊中可用")
+        e.reply("该命令仅在群聊中可用"); return
     is_close = bool(re.search(r"(关闭|禁用)", str(getattr(e, "msg", ""))))
     if not getattr(e, "isMaster", False) and not getattr(e, "isAdmin", False):
-        return await e.reply(f"只有主人及群管理员可{'禁用' if is_close else '启用'}排名...")
+        e.reply(f"只有主人及群管理员可{'禁用' if is_close else '启用'}排名..."); return
     ProfileRank.set_group_cfg(group_id, 1 if is_close else 0)
     if is_close:
-        await e.reply("当前群排名功能已禁用...")
+        e.reply("当前群排名功能已禁用...")
     else:
-        await e.reply("当前群排名功能已启用...\n如数据有问题可通过【#刷新排名】命令来刷新当前群内排名")
+        e.reply("当前群排名功能已启用...\n如数据有问题可通过【#刷新排名】命令来刷新当前群内排名")

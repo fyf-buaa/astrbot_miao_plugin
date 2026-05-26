@@ -76,7 +76,7 @@ async def wife_render(e: Any) -> Any:
 
     m = re.match(_build_wife_regex(), msg)
     if not m:
-        return await e.reply("格式错误，请使用 #老婆/设置/列表 等命令")
+        e.reply("格式错误，请使用 #老婆/设置/列表 等命令"); return
 
     target_keyword = m.group(1)
     action = (m.group(2) or "卡片").strip()
@@ -88,14 +88,14 @@ async def wife_render(e: Any) -> Any:
             target_cfg = rel
             break
     if not target_cfg:
-        return await e.reply("未识别的称呼")
+        e.reply("未识别的称呼"); return
 
     key = target_cfg["key"]
     wtype = target_cfg["type"]
 
     if action in ("设置", "选择", "挑选", "指定", "添加"):
         if not action_param:
-            return await e.reply(f"请指定角色名，如 #{target_keyword}设置甘雨")
+            e.reply(f"请指定角色名，如 #{target_keyword}设置甘雨"); return
         splitted = [x.strip() for x in action_param.replace("，", ",").split(",")]
         splitted = [s for s in splitted if s]
 
@@ -114,14 +114,16 @@ async def wife_render(e: Any) -> Any:
             if resolved == ["随机"]:
                 updated = ["随机"]
             _set_user_wife_list(user_id, key, updated)
-            return await e.reply(f"已设置{target_keyword}列表：{'、'.join(resolved) if resolved != ['随机'] else '随机'}")
-        return await e.reply(f"未找到符合条件的角色")
+            e.reply(f"已设置{target_keyword}列表：{'、'.join(resolved) if resolved != ['随机'] else '随机'}")
+            return
+        e.reply(f"未找到符合条件的角色"); return
 
     if action in ("列表", "是", "是谁"):
         names = _get_user_wife_list(user_id, key)
         if not names:
-            return await e.reply(f"尚未设置{target_keyword}")
-        return await e.reply(f"你的{target_keyword}：{'、'.join(names)}")
+            e.reply(f"尚未设置{target_keyword}"); return
+        e.reply(f"你的{target_keyword}：{'、'.join(names)}")
+        return
 
     if action in ("照片", "相片", "图片", "写真", "图像"):
         render_type = "photo"
@@ -130,11 +132,11 @@ async def wife_render(e: Any) -> Any:
         names = _get_user_wife_list(user_id, key)
         if not names:
             if not uid:
-                return await e.reply(f"请先绑定 UID 或使用 #老婆设置[名字]")
+                e.reply(f"请先绑定 UID 或使用 #老婆设置[名字]"); return
             player = Player.create(uid, "gs")
             avatars = _get_avatars_by_type(player, wtype)
             if not avatars:
-                return await e.reply(f"没有符合条件的角色")
+                e.reply(f"没有符合条件的角色"); return
             chosen = random.choice(avatars)
             from ._character_card import _render_card
             return await _render_card(e, chosen, uid, "gs")
@@ -159,7 +161,7 @@ async def wife_render(e: Any) -> Any:
                     chosen = random.choice(all_released)
                     from ._character_card import _render_card
                     return await _render_card(e, chosen, uid, "gs")
-                return await e.reply(f"没有符合条件的角色")
+                e.reply(f"没有符合条件的角色"); return
             else:
                 chosen_name = random.choice(names)
                 from ..models.character import Character
@@ -169,6 +171,6 @@ async def wife_render(e: Any) -> Any:
                     avatar = player.get_avatar(char.id) if player and hasattr(player, "get_avatar") else None
                     from ._character_card import _render_card
                     return await _render_card(e, avatar or char, uid, "gs")
-                return await e.reply(f"角色 {chosen_name} 未找到")
+                e.reply(f"角色 {chosen_name} 未找到"); return
 
-    return await e.reply(f"未知操作")
+    e.reply(f"未知操作"); return

@@ -20,7 +20,7 @@ async def card_render(e: Any) -> Any:
 
     char = Character.get(char_name, game) if char_name else None
     if not char:
-        return await e.reply("未找到角色，请指定正确的角色名")
+        e.reply("未找到角色，请指定正确的角色名"); return
 
     avatar = None
     if uid and char.is_release:
@@ -40,7 +40,7 @@ async def _render_card(e: Any, avatar: Any, uid: str, game: str) -> Any:
         if char_id:
             char = Character.get(str(char_id))
     if not char:
-        return await e.reply("未找到角色信息")
+        e.reply("未找到角色信息"); return
 
     bg = _get_card_bg(char)
     is_custom = getattr(char, "is_custom", False)

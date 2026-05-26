@@ -18,7 +18,7 @@ async def stat_summary(e: Any) -> Any:
     game = "sr" if "星铁" in str(getattr(e, "msg", "")) else "gs"
     uid = str(getattr(e, "uid", ""))
     if not uid:
-        return await e.reply("请先绑定 UID")
+        e.reply("请先绑定 UID"); return
     player = Player.create(e, game)
     player.e = e
     await player.refresh_profile(1)
@@ -51,7 +51,7 @@ async def talent_stat(e: Any) -> Any:
     game = "sr" if "星铁" in str(getattr(e, "msg", "")) else "gs"
     uid = str(getattr(e, "uid", ""))
     if not uid:
-        return await e.reply("请先绑定 UID")
+        e.reply("请先绑定 UID"); return
     player = Player.create(e, game)
     chars: list[dict[str, Any]] = []
     player.for_each_avatar(lambda avatar, aid: chars.append({
@@ -74,14 +74,14 @@ async def talent_stat(e: Any) -> Any:
             lv = entry.get("level", 1) if isinstance(entry, dict) else entry
             lvs.append(str(lv))
         msg_parts.append(f"{c['name']} {'/'.join(lvs)}")
-    return await e.reply("天赋等级 (A/E/Q):\n" + "\n".join(msg_parts) if msg_parts else "暂无角色数据")
+    e.reply("天赋等级 (A/E/Q); return:\n" + "\n".join(msg_parts) if msg_parts else "暂无角色数据")
 
 
 async def avatar_list(e: Any) -> Any:
     game = "sr" if "星铁" in str(getattr(e, "msg", "")) else "gs"
     uid = str(getattr(e, "uid", ""))
     if not uid:
-        return await e.reply("请先绑定 UID")
+        e.reply("请先绑定 UID"); return
     player = Player.create(e, game)
     chars: list[dict[str, Any]] = []
     player.for_each_avatar(lambda avatar, aid: chars.append({

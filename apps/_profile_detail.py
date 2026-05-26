@@ -16,11 +16,11 @@ async def detail(e: Any) -> Any:
 
     char_name, change_info = _parse_msg(msg)
     if not char_name:
-        return await e.reply("请指定角色名，如 #雷神面板")
+        e.reply("请指定角色名，如 #雷神面板"); return
 
     resolved = _resolve_char_id(char_name, game)
     if not resolved:
-        return await e.reply(f"未找到角色：{char_name}")
+        e.reply(f"未找到角色：{char_name}"); return
     char_id = resolved["id"]
     game = resolved["game"]
     is_sr = game == "sr"
@@ -36,13 +36,13 @@ async def detail(e: Any) -> Any:
         if not uid:
             uid = (uid_map.get("gs_list") or [""])[0]
     if not uid:
-        return await e.reply("请先绑定 UID")
+        e.reply("请先绑定 UID"); return
 
     player = Player.create(e, game)
 
     avatar = player.get_avatar(char_id, create=False)
     if not avatar:
-        return await e.reply("暂未获取该角色面板数据，请先使用 #更新面板")
+        e.reply("暂未获取该角色面板数据，请先使用 #更新面板"); return
 
     data = _build_profile_data(avatar)
     if is_sr:

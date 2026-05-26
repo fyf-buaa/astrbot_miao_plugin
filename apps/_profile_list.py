@@ -13,7 +13,7 @@ async def profile_list(e: Any) -> Any:
 
     uid = str(getattr(e, "uid", ""))
     if not uid:
-        return await e.reply("请先绑定 UID")
+        e.reply("请先绑定 UID"); return
 
     player = Player.create(e, game)
     chars: list[dict[str, Any]] = []
@@ -42,12 +42,12 @@ async def refresh_profile(e: Any) -> Any:
 
     uid = str(getattr(e, "uid", ""))
     if not uid:
-        return await e.reply("请先绑定 UID")
+        e.reply("请先绑定 UID"); return
 
     from ..tools._cooldown import CooldownCache
     cd_key = f"refresh_profile:{uid}:{game}"
     if not CooldownCache.check(cd_key, ttl=300):
-        return await e.reply("该 UID 5 分钟内已更新，请稍后再试")
+        e.reply("该 UID 5 分钟内已更新，请稍后再试"); return
 
     import logging
     logging.info("[profile] refresh uid=%s game=%s", uid, game)
@@ -58,8 +58,8 @@ async def refresh_profile(e: Any) -> Any:
     logging.info("[profile] refresh result uid=%s success=%s", uid, success)
     if success > 0:
         game_name = "星铁" if game == "sr" else "原神"
-        return await e.reply(f"{game_name}面板更新完成，共更新 {success} 个角色")
-    return await e.reply("面板更新失败，请稍后重试")
+        e.reply(f"{game_name}面板更新完成，共更新 {success} 个角色"); return
+    e.reply("面板更新失败，请稍后重试"); return
 
 
 async def delete_profile(e: Any) -> Any:
@@ -69,10 +69,10 @@ async def delete_profile(e: Any) -> Any:
 
     uid = str(getattr(e, "uid", ""))
     if not uid:
-        return await e.reply("请先绑定 UID")
+        e.reply("请先绑定 UID"); return
 
     Player.del_by_uid(uid, game)
-    return await e.reply(f"UID {uid} 面板数据已删除")
+    e.reply(f"UID {uid} 面板数据已删除"); return
 
 
 async def profile_reload(e: Any) -> Any:
@@ -82,8 +82,8 @@ async def profile_reload(e: Any) -> Any:
 
     uid = str(getattr(e, "uid", ""))
     if not uid:
-        return await e.reply("请先绑定 UID")
+        e.reply("请先绑定 UID"); return
 
     player = Player.create(e, game)
     player.reload()
-    return await e.reply(f"UID {uid} 面板数据已重新加载（{game}）")
+    e.reply(f"UID {uid} 面板数据已重新加载（{game}）"); return

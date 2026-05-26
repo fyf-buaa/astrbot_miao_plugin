@@ -12,7 +12,7 @@ async def artis_list(e: Any) -> Any:
     game = "sr" if "星铁" in msg else getattr(e, "game", "gs")
     uid = str(getattr(e, "uid", ""))
     if not uid:
-        return await e.reply("请先绑定 UID")
+        e.reply("请先绑定 UID"); return
 
     player = Player.create(e, game)
     chars: list[dict[str, Any]] = []
@@ -26,7 +26,7 @@ async def artis_list(e: Any) -> Any:
     }))
 
     if not chars:
-        return await e.reply("没有已获取的角色面板数据，请先使用 #更新面板")
+        e.reply("没有已获取的角色面板数据，请先使用 #更新面板"); return
 
     artis_key_title = get_key_title_map(game)
     artis_list_data: list[dict[str, Any]] = []
